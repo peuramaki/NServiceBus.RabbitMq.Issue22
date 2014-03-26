@@ -1,6 +1,7 @@
 
 using NServiceBus.Features;
-using NServiceBus.Persistence.NHibernate;
+
+
 
 namespace ServiceB
 {
@@ -15,12 +16,11 @@ namespace ServiceB
         public void Init()
         {
             Configure.With(AllAssemblies.Except("foobar"));
+                
 
             Configure.Features.Enable<Sagas>();
             Configure.Serialization.Json();
 
-            //use NHibernate (Sql server) for persistence instead of local RavenDB
-            NHibernatePersistence.UseAsDefault();
 
 
         }

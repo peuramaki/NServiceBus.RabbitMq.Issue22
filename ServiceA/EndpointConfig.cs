@@ -15,8 +15,8 @@ namespace ServiceA
         public void Init()
         {
             Configure.Serialization.Json();
-            Configure.Features.Disable<Sagas>();
             Configure.With(AllAssemblies.Except("foobar"));
+
 
 
         }

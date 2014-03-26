@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using DAL;
 using NServiceBus;
 using NServiceBus.Saga;
@@ -11,7 +12,8 @@ using ServiceB.Messages;
 
 namespace ServiceB
 {
-    public class RequestStuffSaga : Saga<RequestStuffSagaData>, IAmStartedByMessages<IRequestStuff>, IHandleMessages<ISomethingCreated>
+    public class RequestStuffSaga : Saga<RequestStuffSagaData>, IAmStartedByMessages<IRequestStuff>,
+        IHandleMessages<ISomethingCreated>
     {
 
         public SqlServerClient SqlServerClient { get; set; }
@@ -24,13 +26,14 @@ namespace ServiceB
         public void Handle(IRequestStuff message)
         {
             this.Data.AggregateRootId = message.AggregateRootId;
-            
+
             this.SqlServerClient.CraeteSomething(this.Data.AggregateRootId);
 
-            for(var i = 0; i< 15 ; i++)
-            { 
-                this.SqlServerClient.UpdateSomethingCount(this.Data.AggregateRootId,i);
-                this.Bus.Send<ICreateSomething>(something => { something.AggregateRootId = this.Data.AggregateRootId; });
+            for (var i = 0; i < 15; i++)
+            {
+                this.SqlServerClient.UpdateSomethingCount(this.Data.AggregateRootId, i);
+                this.Bus.Send<ICreateSomething>(
+                    something => { something.AggregateRootId = this.Data.AggregateRootId; });
             }
         }
 
@@ -39,7 +42,7 @@ namespace ServiceB
             var count = this.SqlServerClient.GetSomething(this.Data.AggregateRootId).Item2;
 
             this.Data.ArrivedSomethingCount++;
-            if(this.Data.ArrivedSomethingCount < 15)
+            if (this.Data.ArrivedSomethingCount < 15)
                 return;
 
             this.ReplyToOriginator<IResponseStuff>(stuff => { stuff.AggregateRootId = this.Data.AggregateRootId; });

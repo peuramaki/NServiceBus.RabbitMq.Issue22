@@ -10,5 +10,6 @@ namespace ServiceB.Messages
     public class ICreateSomething : ICommand
     {
         public Guid AggregateRootId { get; set; }
+        public int Count { get; set; }
     }
 }
