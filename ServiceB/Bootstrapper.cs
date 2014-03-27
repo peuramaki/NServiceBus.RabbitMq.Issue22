@@ -28,12 +28,16 @@ namespace ServiceB
             Configure.Component<OutgoingTransportMessageMutator>(DependencyLifecycle.SingleInstance);
             Configure.Component<SqlServerClient>(DependencyLifecycle.InstancePerUnitOfWork);
 
-            // use Enlist=true in connectionstring for 'ServiceB/SqlConnection'
-            Configure.Component<SqlConnectionManagerWithSqlTransaction>(DependencyLifecycle.InstancePerUnitOfWork);
-            
-            // use Enlist=false in connectionstring for 'ServiceB/SqlConnection'
-            //Configure.Component<SqlConnectionManagerWithoutSqlTransaction>(DependencyLifecycle.InstancePerUnitOfWork);
+            // scenario1: reproduce the issue
+            // expected result: less than 10 responses will arrive to service a
+            // ## => also use Enlist=true in connectionstring for 'ServiceB/SqlConnection'
+            Configure.Component<SqlConnectionManagerWithoutSqlTransaction>(DependencyLifecycle.InstancePerUnitOfWork);
 
+
+            // scenario2: work around the issue
+            // expected result: all 10 responses will arrive to service a
+            // ## => also use Enlist=false in connectionstring for 'ServiceB/SqlConnection'
+            //Configure.Component<SqlConnectionManagerWithSqlTransaction>(DependencyLifecycle.InstancePerUnitOfWork);
         
         }
 

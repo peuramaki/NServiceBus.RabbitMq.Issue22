@@ -19,9 +19,10 @@ namespace DAL
         public void CraeteSomething(Guid guid)
         {
             var sql = "INSERT INTO Something (Guid, Count) VALUES (@guid, 0)";
-            using (var cmd = new SqlCommand(sql, this.ConnectionManager.Connection))
+            using (var cmd = this.ConnectionManager.Connection.CreateCommand())
             {
                 cmd.Transaction = this.ConnectionManager.Tran;
+                cmd.CommandText = sql;
                 cmd.Parameters.AddWithValue("guid", guid);
                 cmd.ExecuteNonQuery();
             }
@@ -30,9 +31,10 @@ namespace DAL
         public void UpdateSomethingCount(Guid guid, int count)
         {
             var sql = "UPDATE Something SET Count = @count WHERE Guid = @guid";
-            using (var cmd = new SqlCommand(sql, this.ConnectionManager.Connection))
+            using (var cmd = this.ConnectionManager.Connection.CreateCommand())
             {
-                cmd.Transaction = this.ConnectionManager.Tran;
+                cmd.Transaction = this.ConnectionManager.Tran; 
+                cmd.CommandText = sql; 
                 cmd.Parameters.AddWithValue("guid", guid);
                 cmd.Parameters.AddWithValue("count", count);
                 cmd.ExecuteNonQuery();
@@ -44,15 +46,15 @@ namespace DAL
             Tuple<Guid, int> res;
             var sql = "SELECT Guid, Count FROM Something WHERE Guid = @guid";
 
-            using (var cmd = new SqlCommand(sql, this.ConnectionManager.Connection))
+            using (var cmd = this.ConnectionManager.Connection.CreateCommand())
             {
-                cmd.Transaction = this.ConnectionManager.Tran;
+                cmd.Transaction = this.ConnectionManager.Tran; 
+                cmd.CommandText = sql; 
                 cmd.Parameters.AddWithValue("guid", guid);
                 using (var reader = cmd.ExecuteReader())
                 {
                     res = reader.Read() ? new Tuple<Guid, int>(reader.GetGuid(0), reader.GetInt32(1)) : null;
                 }
-
             }
             return res;
         }
