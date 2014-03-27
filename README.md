@@ -1,7 +1,5 @@
-NServiceBus.RabbitMq.Issue22
+NServiceBus.RabbitMq.Issue26
 ============================
-
-Issue 22 in NServiceBus.RabbitMQ reproduced
 
 Problem with NServiceBus.RabbitMQ transaction handling is tracked down and reproduced here.
 
